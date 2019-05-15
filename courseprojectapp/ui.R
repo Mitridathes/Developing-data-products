@@ -18,7 +18,7 @@ shinyUI(fluidPage(
                                       value = TRUE)
                 ),
                 mainPanel(h3("Compare the most important degrees in the range of students selected"),
-                          plotOutput("plot3")),
+                          plotOutput("plot1")),
         )
 ))
 

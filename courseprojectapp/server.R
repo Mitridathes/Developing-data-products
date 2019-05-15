@@ -81,11 +81,6 @@ shinyServer(function(input, output){
                             Sex = as.factor(df4$Sex),
                             count = as.numeric(df4$count))
         
-        ## Men vs women per university
-        
-        mwuniv <- dplyr::summarise(dplyr::group_by(my_df, University, Sex),
-                                   Total = sum(count, na.rm = TRUE))
-        
         ## Men vs women per degree
         
         mwdegree <- dplyr::summarise(dplyr::group_by(my_df, Degree, Sex),
@@ -98,18 +93,6 @@ shinyServer(function(input, output){
         ## Server commands
         
         output$plot1 <- renderPlot({
-                data <- c(men = sum(mwuniv[mwuniv[, 2] == "Men", 3]),
-                          women = sum(mwuniv[mwuniv[, 2] == "Women", 3]))
-                pie(data, radius = 1.0, col = c(1, 2))
-        })
-        output$plot2 <- renderPlot({
-                data <- mwuniv
-                with(data, barplot(Total, col = c(1, 2) ,
-                                   border="white", font.axis = 2, beside = TRUE,
-                                   legend = unique(Sex), xlab = "University",
-                                   font.lab = 2))
-        })
-        output$plot3 <- renderPlot({
                 showwomen <- input$checkwomen
                 showmen <- input$checkmen
                 mfrow <- c(1, showwomen + showmen)
@@ -121,6 +104,9 @@ shinyServer(function(input, output){
                 data2 <- subset(mwdegree, mwdegree$Sex == "Women" &
                                         mwdegree$Total >= min(min, 103001) &
                                         mwdegree$Total <= max)[, -2]
+                if (mfrow[2] == 0) {
+                        mfrow[2] <- 1
+                }
                 par(mfrow = mfrow)
                 if (showmen){
                         with(data1[order(-data1$Total), ],
